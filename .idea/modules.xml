@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/THttp.iml" filepath="$PROJECT_DIR$/THttp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/thttp.iml" filepath="$PROJECT_DIR$/thttp.iml" />
       <module fileurl="file://$PROJECT_DIR$/tthttp/tthttp.iml" filepath="$PROJECT_DIR$/tthttp/tthttp.iml" />
     </modules>
   </component>
