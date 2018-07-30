@@ -14,12 +14,4 @@ public interface IBaseView {
      */
     boolean isActive();
 
-    /**
-     * 作为统一的吐司接口，
-     * 也可以用来接收一些简单的string类型返回结果
-     * @param code 根据code来区分业务类型
-     * @param message
-     */
-    void toast(int code, String message);
-
 }

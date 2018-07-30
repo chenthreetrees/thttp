@@ -67,11 +67,19 @@ public class DownLoadPresenter extends HttpPresenter {
         mRetrofitService = RetrofitManager.getInstence().getRetrofitService(baseUrl,new ProgressInterceptor(mHandler),RetrofitService.class);
     }
 
+    /**
+     * 设置下载的文件目录
+     * @param fileDir
+     */
     public void setFileDir(String fileDir)
     {
         destFileDir = fileDir;
     }
 
+    /**
+     * 设置下载的文件名（不能带后缀）
+     * @param fileName
+     */
     public void setDestFileName(String fileName)
     {
         destFileName = fileName;
@@ -86,6 +94,10 @@ public class DownLoadPresenter extends HttpPresenter {
         }
     }
 
+    /**
+     * 下载
+     * @param url 传入正确的URL，不能为空
+     */
     public void download(String url)
     {
         if(TextUtils.isEmpty(url))

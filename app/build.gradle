@@ -28,5 +28,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 
-    compile 'com.github.chenthreetrees:thttp:1.0.0'
+    compile project(":tthttp")
+    compile 'com.github.chenthreetrees:tdialog:1.0.0'
+//    compile 'com.github.chenthreetrees:thttp:1.0.1'
 }

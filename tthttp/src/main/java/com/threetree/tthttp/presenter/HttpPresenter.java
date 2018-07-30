@@ -26,6 +26,9 @@ public class HttpPresenter extends BasePresenter {
          mLoadingView = iLoadingView;
     }
 
+    /**
+     * 在界面退出等需要解绑观察者的情况下调用此方法统一解绑，防止Rx造成的内存泄漏
+     */
     public void destroy()
     {
         dispose();
@@ -72,8 +75,7 @@ public class HttpPresenter extends BasePresenter {
                 }
                 if(!listener.onError(ex.getCode(),ex.getDisplayMessage()))
                 {//如果不单独拦截，则统一弹出
-                    if(mLoadingView.isActive())
-                        mLoadingView.toast(ex.getCode(),ex.getDisplayMessage());
+                    showError(ex);
                 }
             }
         }
@@ -94,6 +96,15 @@ public class HttpPresenter extends BasePresenter {
     protected boolean handleError(ApiException ex)
     {
         return false;
+    }
+
+    /**
+     * 显示异常，可以在这里使用log等
+     * @param ex
+     */
+    protected void showError(ApiException ex)
+    {
+
     }
 
     /**
