@@ -3,10 +3,11 @@
 该框架使用retrofit2.0+rxAndroid进行封装，该框架主要特性：
 
 > * 统一管理网络请求接口
+> * 灵活的线程切换
 > * 支持请求结果的自定义数据结构
 > * 统一的异常拦截处理，对特殊异常也可以单独处理
 > * 支持文件带进度下载
-> * 支持自定义网络拦截器（log输出，头部参数处理等）
+> * 支持自定义拦截器（log输出，头部参数处理等）
 > * 提供请求等待的加载动画入口
 
 
@@ -120,9 +121,10 @@ public class HttpInterceptor implements Interceptor {
 
 ### 初始化
 ```
-        RetrofitManager.getInstence()
-                .baseUrl("your baseurl")
+	RetrofitManager.getInstence()
+                .baseUrl("your baseUrl")
                 .addInterceptor(new HttpInterceptor())
+                .serviceClass(ApiService.class)
                 .create();
 ```
 
@@ -130,11 +132,11 @@ public class HttpInterceptor implements Interceptor {
 具体的业务请求类继承HttpPresenter，传入一些配置参数：
 ```
 public class DocPresenter extends HttpPresenter {
-    private ApiService mApi;
+    private ApiService mApiService;
     public DocPresenter(ILoadingView iLoadingView)
     {
         super(iLoadingView);
-        mApi = RetrofitManager.getInstence().getRetrofitService(ApiService.class);
+        mApiService = (ApiService)RetrofitManager.getInstence().getRetrofitService();
     }
 
     /**
@@ -142,7 +144,7 @@ public class DocPresenter extends HttpPresenter {
      */
     public void getDoc()
     {
-        Observable observable = mApi.getDoc(1,4);//调用接口
+        Observable observable = mApiService.getDoc(1,4);//调用接口
         subscribeHttp(observable, new IHttpResultListener<String>() {
             @Override
             public void onSuccess(String s)
@@ -216,7 +218,7 @@ DocPresenter docPresenter = new DocPresenter(new ILoadingView() {
                     {
 
                     } 
-                }, "your baseUrl");
+                });
                 presenter.setFileDir(FileUtil.ROOT_PATH);
                 presenter.setDestFileName(FileUtil.NAME);
                 presenter.download("http://upload.cbg.cn/2016/0726/1469533389366.jpg");

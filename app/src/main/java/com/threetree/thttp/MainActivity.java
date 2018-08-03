@@ -94,10 +94,10 @@ public class MainActivity extends BaseActivity implements IDocView {
                     mIv.setImageBitmap(BitmapFactory.decodeFile(FileUtil.getFilePath()));
                     mDownLoadPresenter.destroy();
                 }
-            }, "http://upload.cbg.cn/2016/0726/1469533389366.jpg");
+            });
         }
         mDownLoadPresenter.setFileDir(FileUtil.ROOT_PATH);
         mDownLoadPresenter.setDestFileName(FileUtil.NAME);
-        mDownLoadPresenter.download();
+        mDownLoadPresenter.download("http://upload.cbg.cn/2016/0726/1469533389366.jpg");
     }
 }

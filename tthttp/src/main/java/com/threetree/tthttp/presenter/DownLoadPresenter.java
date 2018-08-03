@@ -40,7 +40,6 @@ public class DownLoadPresenter extends HttpPresenter {
     private RetrofitService mRetrofitService;
     private PresenterHandler mHandler = new PresenterHandler(this);
 
-    private String mBaseUrl;
 
     public static class PresenterHandler extends Handler {
         private WeakReference<DownLoadPresenter> mInstance;
@@ -67,17 +66,10 @@ public class DownLoadPresenter extends HttpPresenter {
         }
     }
 
-    public DownLoadPresenter(IProgressView iProgressView, String url)
+    public DownLoadPresenter(IProgressView iProgressView)
     {
         super(iProgressView);
         this.iProgressView = iProgressView;
-        mBaseUrl = url;
-
-        //我们下载一般使用全路径，而retrofit 必须要传baseurl
-        //而且要按格式，否则报错，所以这里处理一下
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        String newUrl = httpUrl.scheme() + "://" + httpUrl.host();
-        mRetrofitService = getRetrofit(newUrl).create(RetrofitService.class);
     }
 
     private Retrofit getRetrofit(String baseUrl)
@@ -135,9 +127,9 @@ public class DownLoadPresenter extends HttpPresenter {
     /**
      * 下载
      */
-    public void download()
+    public void download(String url)
     {
-        if(TextUtils.isEmpty(mBaseUrl))
+        if(TextUtils.isEmpty(url))
            throw new NullPointerException("url must not be null!");
         if(TextUtils.isEmpty(destFileDir))
             throw new NullPointerException("FileDir must not be null!");
@@ -145,7 +137,14 @@ public class DownLoadPresenter extends HttpPresenter {
             throw new NullPointerException("FileName must not be null!");
         if(iProgressView.isActive())
             iProgressView.start();
-        Observable observable = mRetrofitService.downloadFile(mBaseUrl);
+
+        //我们下载一般使用全路径，而retrofit 必须要传baseurl
+        //而且要按格式，否则报错，所以这里处理一下
+        HttpUrl httpUrl = HttpUrl.parse(url);
+        String newUrl = httpUrl.scheme() + "://" + httpUrl.host();
+        mRetrofitService = getRetrofit(newUrl).create(RetrofitService.class);
+
+        Observable observable = mRetrofitService.downloadFile(url);
         subscribeHttp(observable, new IHttpResultListener<ResponseBody>() {
             @Override
             public void onSuccess(ResponseBody responseBody)
