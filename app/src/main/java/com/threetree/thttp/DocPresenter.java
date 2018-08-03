@@ -22,6 +22,8 @@ public class DocPresenter extends CommonPresenter {
      */
     public void getDoc()
     {
+        if(mDocView.isActive())
+            mDocView.showLoading(false);
         Observable observable = mApiService.getDoc(1,4);//调用接口
         subscribeHttp(observable, new IHttpResultListener<String>() {
             @Override

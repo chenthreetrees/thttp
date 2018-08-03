@@ -2,24 +2,19 @@ package com.threetree.thttp;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.threetree.ttdialog.LoadingDialog;
 import com.threetree.tthttp.RetrofitManager;
 import com.threetree.tthttp.presenter.DownLoadPresenter;
 import com.threetree.tthttp.viewbind.IProgressView;
 
-public class MainActivity extends AppCompatActivity implements IDocView{
+public class MainActivity extends BaseActivity implements IDocView {
 
     ImageView mIv;
-    DocPresenter mDocPresenter;
     DownLoadPresenter mDownLoadPresenter;
-    boolean mActive;
-
-    LoadingDialog mDialog;
+    DocPresenter mDocPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,13 +23,14 @@ public class MainActivity extends AppCompatActivity implements IDocView{
         setContentView(R.layout.activity_main);
 
         RetrofitManager.getInstence()
-                .baseUrl("your baseurl")
+                .baseUrl("your baseUrl")
                 .addInterceptor(new HttpInterceptor())
+                .serviceClass(ApiService.class)
                 .create();
 
-        mActive = true;
-        mIv = (ImageView)findViewById(R.id.iv);
         mDocPresenter = new DocPresenter(this,this);
+
+        mIv = (ImageView)findViewById(R.id.iv);
         findViewById(R.id.load_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -42,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements IDocView{
                 download();
             }
         });
+
         findViewById(R.id.doc_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -56,11 +53,16 @@ public class MainActivity extends AppCompatActivity implements IDocView{
     protected void onDestroy()
     {
         super.onDestroy();
-        mActive = false;
-        if(mDocPresenter!=null)
-            mDocPresenter.destroy();
         if(mDownLoadPresenter!=null)
             mDownLoadPresenter.destroy();
+        if(mDocPresenter != null)
+            mDocPresenter.destroy();
+    }
+
+    @Override
+    public void onSuccess(String doc)
+    {
+        Toast.makeText(this,doc,Toast.LENGTH_SHORT).show();
     }
 
     private void download()
@@ -90,43 +92,12 @@ public class MainActivity extends AppCompatActivity implements IDocView{
                 public void success()
                 {
                     mIv.setImageBitmap(BitmapFactory.decodeFile(FileUtil.getFilePath()));
+                    mDownLoadPresenter.destroy();
                 }
-            }, "your baseurl");
+            }, "http://upload.cbg.cn/2016/0726/1469533389366.jpg");
         }
         mDownLoadPresenter.setFileDir(FileUtil.ROOT_PATH);
         mDownLoadPresenter.setDestFileName(FileUtil.NAME);
-        mDownLoadPresenter.download("http://upload.cbg.cn/2016/0726/1469533389366.jpg");
-    }
-
-    @Override
-    public void showLoading(boolean isCancel)
-    {
-        if(mDialog==null)
-        {
-            mDialog = new LoadingDialog.Builder(this)
-                    .setCancelable(isCancel)
-                    .setCancelOutside(isCancel)
-                    .create();
-        }
-        mDialog.show();
-    }
-
-    @Override
-    public void dismissLoading()
-    {
-        if(mDialog!=null)
-            mDialog.dismiss();
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        return mActive;
-    }
-
-    @Override
-    public void onSuccess(String doc)
-    {
-        Toast.makeText(this,doc,Toast.LENGTH_SHORT).show();
+        mDownLoadPresenter.download();
     }
 }
