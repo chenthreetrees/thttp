@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.threetree.tthttp.RetrofitManager;
 import com.threetree.tthttp.RetrofitService;
 import com.threetree.tthttp.filedownload.FileLoadEvent;
 import com.threetree.tthttp.interceptor.ProgressInterceptor;
@@ -16,12 +15,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Administrator on 2018/7/13.
@@ -64,7 +68,25 @@ public class DownLoadPresenter extends HttpPresenter {
     {
         super(iProgressView);
         this.iProgressView = iProgressView;
-        mRetrofitService = RetrofitManager.getInstence().getRetrofitService(baseUrl,new ProgressInterceptor(mHandler),RetrofitService.class);
+        mRetrofitService = getRetrofit(baseUrl).create(RetrofitService.class);
+    }
+
+    private Retrofit getRetrofit(String baseUrl)
+    {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new ProgressInterceptor(mHandler))
+                .connectTimeout(15, TimeUnit.SECONDS)//超时
+                .readTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)//重连
+                .build();
+
+        return new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     /**

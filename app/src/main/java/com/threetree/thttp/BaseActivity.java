@@ -28,9 +28,5 @@ public class BaseActivity extends AppCompatActivity implements ILoadingView {
         return false;
     }
 
-    @Override
-    public void toast(int i, String s)
-    {
 
-    }
 }

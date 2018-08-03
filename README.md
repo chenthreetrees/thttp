@@ -117,6 +117,15 @@ public class HttpInterceptor implements Interceptor {
 ```
 
 ## 简单使用
+
+### 初始化
+```
+        RetrofitManager.getInstence()
+                .baseUrl("your baseurl")
+                .addInterceptor(new HttpInterceptor())
+                .create();
+```
+
 ### 业务请求
 具体的业务请求类继承HttpPresenter，传入一些配置参数：
 ```
@@ -125,9 +134,7 @@ public class DocPresenter extends HttpPresenter {
     public DocPresenter(ILoadingView iLoadingView)
     {
         super(iLoadingView);
-        //这里传入baseURL，拦截器，定义接口的类
-        mApi = RetrofitManager.getInstence().getRetrofitService("your baseUrl",
-                new HttpInterceptor(),ApiService.class);
+        mApi = RetrofitManager.getInstence().getRetrofitService(ApiService.class);
     }
 
     /**

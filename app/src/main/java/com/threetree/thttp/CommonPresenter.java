@@ -19,8 +19,7 @@ public class CommonPresenter extends HttpPresenter {
     {
         super(iLoadingView);
         mContext = context;
-        String url = "your url";
-        mApiService = RetrofitManager.getInstence().getRetrofitService(url,new HttpInterceptor(),ApiService.class);
+        mApiService = RetrofitManager.getInstence().getRetrofitService(ApiService.class);
     }
 
     @Override

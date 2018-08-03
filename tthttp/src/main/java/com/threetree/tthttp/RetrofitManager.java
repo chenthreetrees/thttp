@@ -1,6 +1,5 @@
 package com.threetree.tthttp;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -15,6 +14,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitManager {
     private static RetrofitManager mRetrofitManager;
+    private String mBaseUrl;
+    private Retrofit mRetrofit;
+    private OkHttpClient.Builder mClientBuilder;
+
+    private RetrofitManager()
+    {
+        mClientBuilder = new OkHttpClient.Builder();
+    }
 
     public static RetrofitManager getInstence()
     {
@@ -28,67 +35,38 @@ public class RetrofitManager {
         return mRetrofitManager;
     }
 
-    private OkHttpClient getHttpClient(List<Interceptor> interceptors)
+    public RetrofitManager addInterceptor(Interceptor interceptor)
     {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(15, TimeUnit.SECONDS);//超时
-        if(interceptors != null && interceptors.size() > 0)
-        {
-            for (Interceptor interceptor:interceptors)
-            {
-                builder.addInterceptor(interceptor);
-            }
-        }
-        return builder.build();
+        mClientBuilder.addInterceptor(interceptor);
+        return this;
     }
 
-    private OkHttpClient getHttpClient(Interceptor interceptor)
+    public RetrofitManager baseUrl(String baseUrl)
     {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(15, TimeUnit.SECONDS);//超时
-        if(interceptor != null)
-        {
-            builder.addInterceptor(interceptor);
-        }
-        return builder.build();
+        mBaseUrl = baseUrl;
+        return this;
     }
 
-
-    public <T> T getRetrofitService(String baseUrl, List<Interceptor> interceptors, Class<T> service)
+    public void create()
     {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl)
-                //将client与retrofit关联
-                .client(getHttpClient(interceptors))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        //到这一步创建完成
-        T retrofitService = null;
-        try {
-            Class<T> className = (Class<T>) Class.forName(service.getName());
-            retrofitService = retrofit.create(className);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return retrofitService;
+        Retrofit.Builder builder = new Retrofit.Builder();
+        builder.baseUrl(mBaseUrl);
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+        builder.addConverterFactory(GsonConverterFactory.create());
+
+        mClientBuilder.connectTimeout(15, TimeUnit.SECONDS);//超时
+        mClientBuilder.readTimeout(20, TimeUnit.SECONDS);
+        mClientBuilder.writeTimeout(20, TimeUnit.SECONDS);
+        mClientBuilder.retryOnConnectionFailure(true);//重连
+
+        builder.client(mClientBuilder.build());
+        mRetrofit = builder.build();
     }
 
-    public <T> T getRetrofitService(String baseUrl, Interceptor interceptor, Class<T> service)
+    public <T> T getRetrofitService(Class<T> service)
     {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl)
-                //将client与retrofit关联
-                .client(getHttpClient(interceptor))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        //到这一步创建完成
-        T retrofitService = null;
-        try {
-            Class<T> className = (Class<T>) Class.forName(service.getName());
-            retrofitService = retrofit.create(className);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return retrofitService;
+        if (mRetrofit == null)
+            throw new RuntimeException("retrofit must be init");
+        return mRetrofit.create(service);
     }
 }

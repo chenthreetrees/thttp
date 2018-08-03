@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.threetree.ttdialog.LoadingDialog;
+import com.threetree.tthttp.RetrofitManager;
 import com.threetree.tthttp.presenter.DownLoadPresenter;
 import com.threetree.tthttp.viewbind.IProgressView;
 
@@ -25,15 +26,26 @@ public class MainActivity extends AppCompatActivity implements IDocView{
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        RetrofitManager.getInstence()
+                .baseUrl("your baseurl")
+                .addInterceptor(new HttpInterceptor())
+                .create();
+
         mActive = true;
         mIv = (ImageView)findViewById(R.id.iv);
         mDocPresenter = new DocPresenter(this,this);
-        findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.load_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-//                download();
-
+                download();
+            }
+        });
+        findViewById(R.id.doc_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
                 mDocPresenter.getDoc();
             }
         });
@@ -79,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements IDocView{
                 {
                     mIv.setImageBitmap(BitmapFactory.decodeFile(FileUtil.getFilePath()));
                 }
-            }, "your baseUrl");
+            }, "your baseurl");
         }
         mDownLoadPresenter.setFileDir(FileUtil.ROOT_PATH);
         mDownLoadPresenter.setDestFileName(FileUtil.NAME);
@@ -115,6 +127,6 @@ public class MainActivity extends AppCompatActivity implements IDocView{
     @Override
     public void onSuccess(String doc)
     {
-
+        Toast.makeText(this,doc,Toast.LENGTH_SHORT).show();
     }
 }
