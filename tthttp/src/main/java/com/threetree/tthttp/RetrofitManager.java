@@ -2,6 +2,8 @@ package com.threetree.tthttp;
 
 import android.text.TextUtils;
 
+import com.threetree.tthttp.interceptor.LogInterceptor;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -27,6 +29,7 @@ public class RetrofitManager<T> {
     private long mReadTimeout;
     private long mWriteTimeout;
     private boolean isReConnect;
+    private boolean isDebug;
 
     private RetrofitManager()
     {
@@ -106,6 +109,17 @@ public class RetrofitManager<T> {
         return this;
     }
 
+    public RetrofitManager debug(boolean debug)
+    {
+        isDebug = debug;
+        return this;
+    }
+
+    public boolean isDebug()
+    {
+        return isDebug;
+    }
+
     public void create()
     {
         if(TextUtils.isEmpty(mBaseUrl))
@@ -113,6 +127,7 @@ public class RetrofitManager<T> {
         if(mServiceClass == null)
             throw new NullPointerException("service must not be null");
 
+        mClientBuilder.addInterceptor(new LogInterceptor());
         mClientBuilder.connectTimeout(mConnectTimeout, TimeUnit.SECONDS);//超时
         mClientBuilder.readTimeout(mReadTimeout, TimeUnit.SECONDS);
         mClientBuilder.writeTimeout(mWriteTimeout, TimeUnit.SECONDS);

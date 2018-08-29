@@ -26,6 +26,7 @@ public class MainActivity extends BaseActivity implements IDocView {
                 .baseUrl("your baseUrl")
                 .addInterceptor(new HttpInterceptor())
                 .serviceClass(ApiService.class)
+                .debug(true)
                 .create();
 
         mDocPresenter = new DocPresenter(this,this);
