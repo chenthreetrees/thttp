@@ -10,6 +10,24 @@
 > * 支持自定义拦截器（log输出，头部参数处理等）
 > * 提供请求等待的加载动画入口
 
+## 引用
+
+在项目的gradle文件引用插件：
+```
+buildscript {
+    repositories {
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+}
+```
+
+在app的gradle文件引用依赖：
+```
+compile 'com.github.chenthreetrees:thttp:1.0.5'
+```
+
 
 ## Retrofit中http POST/GET请求(结合了rx)
 Retrofit中的网络请求都是通过注解方式的接口方法来表示的,此处只对常用的post和get请求进行说明，
