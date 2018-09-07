@@ -29,7 +29,7 @@ compile 'com.github.chenthreetrees:thttp:1.0.5'
 ```
 
 
-## Retrofit中http POST/GET请求(结合了rx)
+## 接口请求
 Retrofit中的网络请求都是通过注解方式的接口方法来表示的,此处只对常用的post和get请求进行说明，
 Retrofit还提供有put，delete等请求方式可自己研究官方文档使用。
 
@@ -140,17 +140,19 @@ public class HttpInterceptor implements Interceptor {
 ### 初始化
 ```
 	RetrofitManager.getInstence()
-                .baseUrl("your baseUrl")
-                .addInterceptor(new HttpInterceptor())
-                .serviceClass(ApiService.class)
+                .baseUrl("your baseUrl")//设置你的baseUrl，不能为空
+                .addInterceptor(new HttpInterceptor())//添加自己的拦截器，参考retrofit拦截器的使用，可选
+                .serviceClass(ApiService.class)//设置api接口请求文件，参考上面的接口请求
+				.debug(true)//是否打印response数据，默认为false
                 .create();
 ```
 
 ### 业务请求
-具体的业务请求类继承HttpPresenter，传入一些配置参数：
+具体的业务请求类继承HttpPresenter：
 ```
 public class DocPresenter extends HttpPresenter {
     private ApiService mApiService;
+	//ILoadingView: 页面的回调，详细参考demo
     public DocPresenter(ILoadingView iLoadingView)
     {
         super(iLoadingView);
@@ -158,7 +160,7 @@ public class DocPresenter extends HttpPresenter {
     }
 
     /**
-     * 网络请求的具体实现
+     * 具体业务的网络请求
      */
     public void getDoc()
     {
@@ -206,9 +208,10 @@ DocPresenter docPresenter = new DocPresenter(new ILoadingView() {
             }
 
         });
+		docPresenter.getDoc();
 ```
 
-上面的代码看起来还是不够简洁，建议根据业务需求进一步封装基类
+上面的代码看起来还是不够简洁，建议根据业务需求进一步封装基类,参考demo。
 
 ### 文件下载
 ```
