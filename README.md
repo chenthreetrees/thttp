@@ -25,7 +25,7 @@ buildscript {
 
 在app的gradle文件引用依赖：
 ```
-compile 'com.github.chenthreetrees:thttp:1.0.5'
+compile 'com.github.chenthreetrees:thttp:1.0.6'
 ```
 
 
