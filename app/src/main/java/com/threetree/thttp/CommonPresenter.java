@@ -19,10 +19,8 @@ public class CommonPresenter extends HttpPresenter {
     {
         super(iLoadingView);
         mContext = context;
-//        mApiService = RetrofitManager.getInstence().getRetrofitService(ApiService.class);
         mApiService = (ApiService)RetrofitManager.getInstence().getRetrofitService();
     }
-
 
     @Override
     protected void showError(ApiException ex)

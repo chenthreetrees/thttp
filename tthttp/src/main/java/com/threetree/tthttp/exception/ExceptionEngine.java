@@ -52,7 +52,7 @@ public class ExceptionEngine {
         ApiException ex;
         if (e instanceof HttpException){             //HTTP错误
             HttpException httpException = (HttpException) e;
-            ex = new ApiException(e, ERROR.HTTP_ERROR);
+            ex = new ApiException(e, httpException.code());
             switch(httpException.code()){
                 case UNAUTHORIZED:
                 case FORBIDDEN:
@@ -91,7 +91,7 @@ public class ExceptionEngine {
             return ex;
         }else {
             ex = new ApiException(e, ERROR.UNKNOWN);
-            ex.setDisplayMessage("未知错误");          //未知错误
+            ex.setDisplayMessage("未知错误:" + e.getMessage());          //未知错误
             return ex;
         }
     }

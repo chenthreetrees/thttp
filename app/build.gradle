@@ -30,5 +30,5 @@ dependencies {
 
     compile project(":tthttp")
     compile 'com.github.chenthreetrees:tdialog:1.0.0'
-//    compile 'com.github.chenthreetrees:thttp:1.0.5'
+//    compile 'com.github.chenthreetrees:thttp:1.0.6'
 }
